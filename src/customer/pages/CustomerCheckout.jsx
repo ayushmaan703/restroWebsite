@@ -1,0 +1,70 @@
+import { useState } from 'react';
+import { ArrowLeft, CheckCircle2, LoaderCircle } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { addOrderItem } from '../../store/slices/orderSlice';
+import { clearCart } from '../../store/slices/cartSlice';
+
+export default function CustomerCheckout() {
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const items = useSelector(state => state.cart.items);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const tableId = params.get('table') || sessionStorage.getItem('customerTable') || '';
+  const Comid = params.get('Comid') || sessionStorage.getItem('customerComid') || '1';
+  const Uid = params.get('Uid') || '1';
+  const total = items.reduce((sum, item) => sum + item.qty * item.price, 0);
+
+  const submit = async () => {
+    if (!tableId) return setError('Table information is missing from the QR code.');
+    if (!items.length) return setError('Your cart is empty.');
+
+    setBusy(true);
+    setError('');
+    let transid = '0';
+    let orderNo = ',,';
+
+    try {
+      for (const item of items) {
+        const result = await dispatch(addOrderItem({
+          tableId,
+          menuId: item.id,
+          qty: item.qty,
+          Comid,
+          Uid,
+          transid,
+          OrderNo: orderNo,
+        }));
+        if (!addOrderItem.fulfilled.match(result)) throw new Error(result.payload || 'Unable to place order');
+        transid = String(result.payload.transid || transid);
+        orderNo = String(result.payload.OrderNo || orderNo);
+      }
+
+      dispatch(clearCart());
+      sessionStorage.setItem('customerOrder', JSON.stringify({ transid, orderNo, tableId, Comid }));
+      navigate(`/customer/confirmation?transid=${encodeURIComponent(transid)}&orderNo=${encodeURIComponent(orderNo)}&table=${encodeURIComponent(tableId)}&Comid=${encodeURIComponent(Comid)}`);
+    } catch (err) {
+      setError(err.message || 'Unable to place order');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="customer-page">
+      <div className="customer-card">
+        <button className="back-link" onClick={() => navigate(`/customer/cart?table=${encodeURIComponent(tableId)}&Comid=${encodeURIComponent(Comid)}`)}><ArrowLeft size={16} /> Back to cart</button>
+        <div className="customer-page-title"><div className="page-icon"><CheckCircle2 size={20} /></div><div><h2>Confirm order</h2><span>Table {tableId}</span></div></div>
+        <div className="checkout-list">
+          {items.map(item => <div className="checkout-line" key={item.id}><span>{item.qty} × {item.name}</span><b>₹ {(item.qty * item.price).toFixed(2)}</b></div>)}
+        </div>
+        <div className="total-line grand-total"><span>Total</span><b>₹ {total.toFixed(2)}</b></div>
+        <p className="checkout-note">Your order will be sent directly to the restaurant using this table's QR code.</p>
+        {error && <div className="error-box">{error}</div>}
+        <button className="primary-full" disabled={busy} onClick={submit}>{busy ? <><LoaderCircle size={17} className="spin" /> Placing order...</> : 'Place order'}</button>
+      </div>
+    </div>
+  );
+}
