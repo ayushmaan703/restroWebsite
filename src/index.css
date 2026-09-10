@@ -533,14 +533,14 @@ button:disabled {
 }
 .table-card.occupied {
   border: 1px solid #f3b6b6;
-  background: #f36464;
+  background: #f07b7b;
   color: #9f3a3a;
   box-shadow: 0 6px 18px rgba(199, 71, 71, 0.1);
 }
 
 .table-card.available {
-  border: 1px solid #b9dfc9;
-  background: #40e780;
+  border: 1px solid #5fdf95;
+  background: #61ce8ad7;
   color: #28734a;
   box-shadow: 0 6px 18px rgba(45, 138, 93, 0.1);
 }
@@ -563,12 +563,12 @@ button:disabled {
 
 .table-card.occupied:hover {
   border-color: #e9a2a2;
-  background: #d02727;
+  background: #ce6868;
 }
 
 .table-card.available:hover {
   border-color: #a8d5ba;
-  background: #12b657;
+  background: #4bd183;
 }
 
 .table-card.occupied .table-title,
