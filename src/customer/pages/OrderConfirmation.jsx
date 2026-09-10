@@ -21,10 +21,10 @@ export default function OrderConfirmation() {
           the team prepares it.
         </p>
         <div className="confirmation-meta">
-          <div>
+          {/* <div>
             <span>Table</span>
             <b>{table || '—'}</b>
-          </div>
+          </div> */}
           <div>
             <span>Order</span>
             <b>#{orderNo || transid || '—'}</b>

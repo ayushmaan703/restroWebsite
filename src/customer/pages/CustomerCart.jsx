@@ -1,13 +1,16 @@
+import { useEffect } from 'react';
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { changeQty, removeFromCart } from '../../store/slices/cartSlice';
+import { fetchRunningOrderForTable } from '../../store/slices/orderSlice';
 
 export default function CustomerCart() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const items = useSelector(state => state.cart.items);
+  const currentOrder = useSelector(state => state.orders.customerCurrentOrder);
   const tableId =
     params.get('table') ||
     params.get('TableId') ||
@@ -19,6 +22,12 @@ export default function CustomerCart() {
     '1';
   const total = items.reduce((sum, item) => sum + item.qty * item.price, 0);
   const itemCount = items.reduce((sum, item) => sum + item.qty, 0);
+
+  useEffect(() => {
+    if (tableId) {
+      dispatch(fetchRunningOrderForTable({ Comid, tableId }));
+    }
+  }, [Comid, dispatch, tableId]);
 
   return (
     <div className="customer-page">
@@ -44,13 +53,36 @@ export default function CustomerCart() {
           <div>
             <h2>Your order</h2>
             <span>
-              Table {tableId} · {itemCount} items
+              {itemCount} items
             </span>
           </div>
         </div>
 
+        {currentOrder?.items?.length > 0 && (
+          <div className="customer-existing-order">
+            <div className="customer-existing-order-head">
+              <div>
+                <span>RUNNING ORDER</span>
+                <strong>#{currentOrder.orderNo}</strong>
+              </div>
+              <small>Already sent</small>
+            </div>
+            {currentOrder.items.map(item => (
+              <div className="cart-line existing" key={`existing-${item.key}`}>
+                <div>
+                  <div className="cart-line-name">{item.name}</div>
+                  <div className="cart-line-price">
+                    {item.qty} × ₹ {item.price.toFixed(2)}
+                  </div>
+                </div>
+                <b>₹ {(item.qty * item.price).toFixed(2)}</b>
+              </div>
+            ))}
+          </div>
+        )}
+
         {!items.length ? (
-          <div className="empty-order">Your cart is empty.</div>
+          <div className="empty-order">Your cart is empty. Add something more to continue this order.</div>
         ) : (
           <div className="customer-cart-list">
             {items.map(item => (

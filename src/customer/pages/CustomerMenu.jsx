@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { fetchCategories, fetchMenu } from '../../store/slices/menuSlice';
+import { fetchRunningOrderForTable } from '../../store/slices/orderSlice';
 import { addToCart, changeQty, clearCart } from '../../store/slices/cartSlice';
 import CustomerHeader from '../components/CustomerHeader';
 import CategoryTabs from '../components/CategoryTabs';
@@ -13,6 +14,7 @@ export default function CustomerMenu() {
   const dispatch = useDispatch();
   const menu = useSelector(state => state.menu);
   const cart = useSelector(state => state.cart.items);
+  const currentOrder = useSelector(state => state.orders.customerCurrentOrder);
   const [category, setCategory] = useState('0');
   const [search, setSearch] = useState('');
 
@@ -36,6 +38,7 @@ export default function CustomerMenu() {
     sessionStorage.setItem('customerComid', Comid);
     dispatch(fetchCategories({ Comid }));
     dispatch(fetchMenu({ Comid, CategoryId: 0 }));
+    dispatch(fetchRunningOrderForTable({ Comid, tableId }));
   }, [Comid, dispatch, tableId]);
 
   const chooseCategory = id => {
@@ -74,6 +77,15 @@ export default function CustomerMenu() {
       />
       {menu.error && (
         <div className="error-box customer-error">{String(menu.error)}</div>
+      )}
+      {currentOrder?.transid && (
+        <div className="customer-running-order">
+          <div>
+            <strong>Current order #{currentOrder.orderNo}</strong>
+            <span>{currentOrder.items?.reduce((sum, item) => sum + item.qty, 0) || 0} items already ordered</span>
+          </div>
+          <span>New items will be added to this order</span>
+        </div>
       )}
       <main className="customer-menu-grid">
         {menu.loading && !menu.items.length ? (

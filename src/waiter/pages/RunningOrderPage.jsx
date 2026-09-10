@@ -16,7 +16,7 @@ import {
   addOrderItem,
   decrementOrderItem,
   fetchOrderDetail,
-  removeOrderItem,
+  deleteOrderItem,
   resetCurrentOrder,
   setCurrentOrder,
 } from '../../store/slices/orderSlice';
@@ -403,13 +403,13 @@ export default function RunningOrderPage() {
                     </span>
                   </div>
                   <div className="waiter-qty">
-                    <button
+                    {/* <button
                       type="button"
                       aria-label="Decrease quantity"
                       onClick={() => dispatch(decrementOrderItem(item.key))}
                     >
                       <Minus size={12} />
-                    </button>
+                    </button> */}
                     <strong>{item.qty}</strong>
                     {/* <button
                       type="button"
@@ -424,15 +424,21 @@ export default function RunningOrderPage() {
                     </button> */}
                   </div>
                   <span>₹ {(item.price * item.qty).toFixed(2)}</span>
-                  <button
-                    type="button"
-                    className="order-remove"
-                    aria-label={`Remove ${item.name}`}
-                    title="Remove from waiter view"
-                    onClick={() => dispatch(removeOrderItem(item.key))}
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                  {(item.kitchenStatus == "New") &&
+                    <button
+                      type="button"
+                      className="order-remove"
+                      aria-label={`Remove ${item.name}`}
+                      title="Delete from order"
+                      onClick={() => dispatch(deleteOrderItem({
+                        trans3id: item.trans3id || item.key,
+                        Uid,
+                        Comid,
+                        transid: order.transid,
+                      }))}
+                    >
+                      <Trash2 size={14} />
+                    </button>}
                 </div>
               ))
             )}

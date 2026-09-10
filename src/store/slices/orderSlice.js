@@ -27,6 +27,42 @@ export const fetchOrderDetail = createAsyncThunk('orders/fetchOrderDetail', asyn
   }
 });
 
+export const fetchRunningOrderForTable = createAsyncThunk(
+  'orders/fetchRunningOrderForTable',
+  async ({ tableId, Comid = '1' } = {}, { rejectWithValue }) => {
+    try {
+      const summaries = asArray(unwrap(await api.getTableOrders({ Comid, typ: 4 }))).map(normalizeOrderSummary);
+      const target = summaries.find(order => String(order.tableId) === String(tableId));
+
+      if (!target?.transid) {
+        return null;
+      }
+
+      const items = asArray(unwrap(await api.getOrderDetail({ transid: target.transid, Comid }))).map(normalizeOrderItem);
+      return { ...target, items };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message || 'Unable to load current order');
+    }
+  },
+);
+
+export const deleteOrderItem = createAsyncThunk(
+  'orders/deleteOrderItem',
+  async ({ trans3id, Uid = 1, Comid = '1', transid } = {}, { rejectWithValue }) => {
+    try {
+      await api.deleteOrderEntry({ trans3id, Uid });
+
+      const items = transid && String(transid) !== '0'
+        ? asArray(unwrap(await api.getOrderDetail({ transid, Comid }))).map(normalizeOrderItem)
+        : [];
+
+      return { trans3id: String(trans3id), items };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message || 'Unable to delete order item');
+    }
+  },
+);
+
 export const addOrderItem = createAsyncThunk('orders/addOrderItem', async ({ tableId, menuId, qty = 1, Comid = '1', Uid = 1, transid = 0, OrderNo = ',,' }, { rejectWithValue }) => {
   try {
     const response = await api.addOrder({ tableId, MenuId: menuId, Qty: qty, Comid, Uid, transid, OrderNo });
@@ -51,6 +87,7 @@ const slice = createSlice({
     loading: false,
     adding: false,
     error: null,
+    customerCurrentOrder: null,
   },
   reducers: {
     setCurrentOrder: (state, action) => {
@@ -58,10 +95,6 @@ const slice = createSlice({
       state.OrderNo = String(action.payload?.OrderNo || ',,');
       state.items = action.payload?.items || [];
       state.error = null;
-    },
-    removeOrderItem: (state, action) => {
-      const targetKey = String(action.payload);
-      state.items = state.items.filter(item => String(item.key) !== targetKey);
     },
     decrementOrderItem: (state, action) => {
       const targetKey = String(action.payload);
@@ -90,6 +123,19 @@ const slice = createSlice({
       .addCase(fetchOrderDetail.pending, state => { state.loading = true; state.error = null; })
       .addCase(fetchOrderDetail.fulfilled, (state, action) => { state.loading = false; state.items = action.payload; })
       .addCase(fetchOrderDetail.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
+      .addCase(fetchRunningOrderForTable.pending, state => { state.error = null; })
+      .addCase(fetchRunningOrderForTable.fulfilled, (state, action) => {
+        state.customerCurrentOrder = action.payload;
+      })
+      .addCase(fetchRunningOrderForTable.rejected, (state, action) => {
+        state.customerCurrentOrder = null;
+        state.error = action.payload;
+      })
+      .addCase(deleteOrderItem.pending, state => { state.error = null; })
+      .addCase(deleteOrderItem.fulfilled, (state, action) => {
+        state.items = action.payload.items;
+      })
+      .addCase(deleteOrderItem.rejected, (state, action) => { state.error = action.payload; })
       .addCase(addOrderItem.pending, state => { state.adding = true; state.error = null; })
       .addCase(addOrderItem.fulfilled, (state, action) => {
         state.adding = false;
@@ -100,5 +146,5 @@ const slice = createSlice({
   },
 });
 
-export const { setCurrentOrder, removeOrderItem, decrementOrderItem, resetCurrentOrder } = slice.actions;
+export const { setCurrentOrder, decrementOrderItem, resetCurrentOrder } = slice.actions;
 export default slice.reducer;

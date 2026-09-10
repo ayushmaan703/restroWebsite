@@ -48,4 +48,7 @@ export const api = {
 
   getOrderDetail: ({ transid, Comid = comid }) =>
     get("/GetOrderdetail", { transid, Comid }),
+
+  deleteOrderEntry: ({ trans3id, Uid = 1 }) =>
+    get("/DeleteOrderEntry", { trans3id, Uid }),
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, CheckCircle2, LoaderCircle, Smartphone } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { addOrderItem } from '../../store/slices/orderSlice';
+import { addOrderItem, fetchRunningOrderForTable } from '../../store/slices/orderSlice';
 import { clearCart } from '../../store/slices/cartSlice';
 
 export default function CustomerCheckout() {
@@ -10,6 +10,7 @@ export default function CustomerCheckout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const items = useSelector(state => state.cart.items);
+  const currentOrder = useSelector(state => state.orders.customerCurrentOrder);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [mobileNo, setMobileNo] = useState(
@@ -26,6 +27,12 @@ export default function CustomerCheckout() {
   useEffect(() => {
     sessionStorage.setItem('customerMobile', mobileNo);
   }, [mobileNo]);
+
+  useEffect(() => {
+    if (tableId) {
+      dispatch(fetchRunningOrderForTable({ Comid, tableId }));
+    }
+  }, [Comid, dispatch, tableId]);
 
   const submit = async () => {
     if (!tableId) {
@@ -45,10 +52,21 @@ export default function CustomerCheckout() {
 
     setBusy(true);
     setError('');
-    let transid = '0';
-    let orderNo = ',,';
 
     try {
+      // Re-check the table's running order immediately before adding. This
+      // prevents a second customer visit from accidentally creating a new
+      // order when the table already has one running.
+      const runningResult = await dispatch(
+        fetchRunningOrderForTable({ Comid, tableId }),
+      );
+      const runningOrder = fetchRunningOrderForTable.fulfilled.match(runningResult)
+        ? runningResult.payload
+        : currentOrder;
+
+      let transid = String(runningOrder?.transid || '0');
+      let orderNo = String(runningOrder?.orderNo || ',,');
+
       for (const item of items) {
         const result = await dispatch(
           addOrderItem({
@@ -112,7 +130,7 @@ export default function CustomerCheckout() {
           </div>
           <div>
             <h2>Confirm order</h2>
-            <span>Table {tableId}</span>
+            {/* <span>Table {tableId}</span> */}
           </div>
         </div>
 
