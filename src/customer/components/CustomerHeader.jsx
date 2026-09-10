@@ -16,7 +16,7 @@ export default function CustomerHeader({ tableNo, search, setSearch }) {
       >
         <div>
           <div className="customer-brand">Restaurant</div>
-          <div className="customer-sub"> Order from your table</div>
+          <div className="customer-sub">Order from your table</div>
         </div>
         <button
           className="add-button"

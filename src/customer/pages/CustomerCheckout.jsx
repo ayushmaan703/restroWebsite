@@ -112,7 +112,7 @@ export default function CustomerCheckout() {
           </div>
           <div>
             <h2>Confirm order</h2>
-            {/* <span>Table {tableId}</span> */}
+            <span>Table {tableId}</span>
           </div>
         </div>
 

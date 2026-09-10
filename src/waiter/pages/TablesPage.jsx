@@ -115,20 +115,20 @@ export default function TablesPage() {
 
       <main className="table-content">
         <div className="page-heading-row">
-          <div>
+          {/* <div>
             <span className="eyebrow">FLOOR OVERVIEW</span>
             <h1>Tables</h1>
             <p>
               Choose a table to start a new order or continue a running order.
             </p>
-          </div>
+          </div> */}
           {/* <div className="filter-caption">
             <SlidersHorizontal size={15} />
             {section === '0' ? 'All sections' : 'Filtered section'}
           </div> */}
         </div>
 
-        <div className="dashboard-strip">
+        {/* <div className="dashboard-strip">
           <div className="stat-card accent">
             <span>Total Tables</span>
             <strong>{tables.tableCount}</strong>
@@ -153,7 +153,7 @@ export default function TablesPage() {
             <span>Today's Sale</span>
             <strong>₹ {tables.todaysSale.toFixed(2)}</strong>
           </div>
-        </div>
+        </div> */}
 
         {tables.error && <div className="error-box">{String(tables.error)}</div>}
 
@@ -177,15 +177,15 @@ export default function TablesPage() {
                 >
                   <div className="table-card-top">
                     <span className="table-title">{table.tableNo}</span>
-                    <span className="occupied-badge">
+                    {/* <span className="occupied-badge">
                       {occupied ? 'OCCUPIED' : 'AVAILABLE'}
-                    </span>
+                    </span> */}
                   </div>
-                  <span className="table-type">
+                  {/* <span className="table-type">
                     {table.floor || 'Floor'}
                     {table.section ? ` · ${table.section}` : ''}
-                  </span>
-                  <span className="table-capacity">Capacity {table.capacity}</span>
+                  </span> */}
+                  {/* <span className="table-capacity">Capacity {table.capacity}</span> */}
                   <span className="table-open-hint">
                     {occupied ? 'Continue order' : 'Start order'}
                   </span>

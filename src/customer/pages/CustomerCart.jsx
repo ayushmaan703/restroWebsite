@@ -44,7 +44,7 @@ export default function CustomerCart() {
           <div>
             <h2>Your order</h2>
             <span>
-              {itemCount} items
+              Table {tableId} · {itemCount} items
             </span>
           </div>
         </div>

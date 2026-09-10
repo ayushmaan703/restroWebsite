@@ -20,7 +20,7 @@ export default function OrderConfirmation() {
           Your order has been sent to the restaurant kitchen. Please relax while
           the team prepares it.
         </p>
-        {/* <div className="confirmation-meta">
+        <div className="confirmation-meta">
           <div>
             <span>Table</span>
             <b>{table || '—'}</b>
@@ -29,7 +29,7 @@ export default function OrderConfirmation() {
             <span>Order</span>
             <b>#{orderNo || transid || '—'}</b>
           </div>
-        </div> */}
+        </div>
         <button
           className="primary-full"
           onClick={() => navigate(`/customer/order?TableId=${encodeURIComponent(table)}`)}
