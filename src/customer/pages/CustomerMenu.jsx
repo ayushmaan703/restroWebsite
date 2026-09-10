@@ -16,14 +16,22 @@ export default function CustomerMenu() {
   const [category, setCategory] = useState('0');
   const [search, setSearch] = useState('');
 
-  const tableId = params.get('table') || params.get('TableId') || params.get('tableId') || '';
+  const tableId =
+    params.get('table') ||
+    params.get('TableId') ||
+    params.get('tableId') ||
+    '';
   const tableNo = params.get('tableNo') || params.get('TableNo') || tableId;
   const Comid = params.get('Comid') || '1';
 
   useEffect(() => {
     if (!tableId) return;
+
     const previousTable = sessionStorage.getItem('customerTable');
-    if (previousTable && previousTable !== tableId) dispatch(clearCart());
+    if (previousTable && previousTable !== tableId) {
+      dispatch(clearCart());
+    }
+
     sessionStorage.setItem('customerTable', tableId);
     sessionStorage.setItem('customerComid', Comid);
     dispatch(fetchCategories({ Comid }));
@@ -44,19 +52,54 @@ export default function CustomerMenu() {
   const count = cart.reduce((sum, item) => sum + item.qty, 0);
   const total = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
 
-  if (!tableId) return <div className="center-message customer-invalid">Invalid QR code: table information is missing.</div>;
+  if (!tableId) {
+    return (
+      <div className="center-message customer-invalid">
+        Invalid QR code: table information is missing.
+      </div>
+    );
+  }
 
   return (
     <div className="customer-app">
-      <CustomerHeader tableNo={tableNo} search={search} setSearch={setSearch} />
-      <CategoryTabs categories={menu.categories} active={category} onChange={chooseCategory} />
-      {menu.error && <div className="error-box customer-error">{String(menu.error)}</div>}
+      <CustomerHeader
+        tableNo={tableNo}
+        search={search}
+        setSearch={setSearch}
+      />
+      <CategoryTabs
+        categories={menu.categories}
+        active={category}
+        onChange={chooseCategory}
+      />
+      {menu.error && (
+        <div className="error-box customer-error">{String(menu.error)}</div>
+      )}
       <main className="customer-menu-grid">
-        {menu.loading && !menu.items.length ? <div className="center-message">Loading menu...</div> : filtered.map(item => {
-          const qty = cart.find(cartItem => String(cartItem.id) === String(item.id))?.qty || 0;
-          return <FoodCard key={item.id} item={item} qty={qty} onAdd={() => dispatch(addToCart(item))} onChange={delta => dispatch(changeQty({ id: item.id, delta }))} />;
-        })}
-        {!menu.loading && !filtered.length && <div className="center-message">No dishes found.</div>}
+        {menu.loading && !menu.items.length ? (
+          <div className="center-message">Loading menu...</div>
+        ) : (
+          filtered.map(item => {
+            const qty =
+              cart.find(cartItem => String(cartItem.id) === String(item.id))?.qty ||
+              0;
+
+            return (
+              <FoodCard
+                key={item.id}
+                item={item}
+                qty={qty}
+                onAdd={() => dispatch(addToCart(item))}
+                onChange={delta =>
+                  dispatch(changeQty({ id: item.id, delta }))
+                }
+              />
+            );
+          })
+        )}
+        {!menu.loading && !filtered.length && (
+          <div className="center-message">No dishes found.</div>
+        )}
       </main>
       <FloatingCart count={count} total={total} />
     </div>

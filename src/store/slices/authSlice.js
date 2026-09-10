@@ -17,7 +17,6 @@ export const userLogin = createAsyncThunk(
       const rows = asArray(
         unwrap(await api.login({ username, password, Comid })),
       );
-
       const user = rows[0];
       if (user.Status == "User not found")
         return rejectWithValue("Invalid user");
