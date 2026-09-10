@@ -1624,7 +1624,7 @@ button:disabled {
   }
 
   .customer-menu-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .customer-page {
