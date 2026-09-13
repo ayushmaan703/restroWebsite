@@ -1135,10 +1135,15 @@ button:disabled {
 .food-placeholder {
   width: 100%;
   height: 145px;
-  object-fit: cover;
+  object-fit: contain;
   background: #eef1f4;
 }
-
+@media (max-width: 600px) {
+  .food-image {
+    height: 140px;
+    object-fit: contain;
+  }
+}
 .food-placeholder {
   display: grid;
   place-items: center;
