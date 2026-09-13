@@ -5,7 +5,7 @@
       "destination": "http://103.175.22.11:8911/STK_API_REST.asmx/:path*"
     },
     {
-      "source": "/images/:path*",
+      "source": "/Images/:path*",
       "destination": "http://103.175.22.11:8911/Images/:path*"
     },
     {
