@@ -1,8 +1,10 @@
 import { ShoppingCart } from 'lucide-react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function CustomerHeader({ tableNo, search, setSearch }) {
   const navigate = useNavigate();
+  const name = useSelector(s => s.auth.restroName)
 
   return (
     <header className="customer-top">
@@ -15,8 +17,22 @@ export default function CustomerHeader({ tableNo, search, setSearch }) {
         }}
       >
         <div>
-          <div className="customer-brand">Restaurant</div>
-          <div className="customer-sub">Order from your table</div>
+          <div className="customer-brand">{name}</div>
+          <div className="customer-sub">
+            Order from your
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                marginLeft: '3px',
+                fontWeight: 500,
+                color: 'black',
+                fontSize: '13px',
+              }}
+            >
+              {tableNo}
+            </span>
+          </div>
         </div>
         <button
           className="add-button"

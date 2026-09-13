@@ -8,6 +8,8 @@ import CustomerHeader from '../components/CustomerHeader';
 import CategoryTabs from '../components/CategoryTabs';
 import FoodCard from '../components/FoodCard';
 import FloatingCart from '../components/FloatingCart';
+import { logoutUser, restroName } from '../../store/slices/authSlice';
+import { fetchTableNumber } from '../../store/slices/tableSlice';
 
 export default function CustomerMenu() {
   const [params] = useSearchParams();
@@ -15,9 +17,9 @@ export default function CustomerMenu() {
   const menu = useSelector(state => state.menu);
   const cart = useSelector(state => state.cart.items);
   const currentOrder = useSelector(state => state.orders.customerCurrentOrder);
+  const table = useSelector(state => state.tables.tableNo.TableNo);
   const [category, setCategory] = useState('0');
   const [search, setSearch] = useState('');
-
   const tableId =
     params.get('table') ||
     params.get('TableId') ||
@@ -39,12 +41,15 @@ export default function CustomerMenu() {
     dispatch(fetchCategories({ Comid }));
     dispatch(fetchMenu({ Comid, CategoryId: 0 }));
     dispatch(fetchRunningOrderForTable({ Comid, tableId }));
+    dispatch(restroName({ Comid }));
+    dispatch(fetchTableNumber({ Comid, Tableid: tableId }));
   }, [Comid, dispatch, tableId]);
 
   const chooseCategory = id => {
     const next = String(id);
     setCategory(next);
     dispatch(fetchMenu({ Comid, CategoryId: next }));
+
   };
 
   const filtered = useMemo(() => {
@@ -66,7 +71,7 @@ export default function CustomerMenu() {
   return (
     <div className="customer-app">
       <CustomerHeader
-        tableNo={tableNo}
+        tableNo={table}
         search={search}
         setSearch={setSearch}
       />

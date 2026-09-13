@@ -15,6 +15,8 @@ export const api = {
 
   getTableCount: (Comid = comid) => get("/GetTableCount", { Comid }),
   getTodaysCount: (Comid = comid) => get("/GetTodaysCount", { Comid }),
+  getTableNo: ({ Comid = comid, Tableid } = {}) =>
+    get("/GetTableNo", { Comid, Tableid }),
 
   // typ=4: running, typ=5: completed
   getTableOrders: ({ Comid = comid, typ = 4 } = {}) =>
@@ -35,6 +37,7 @@ export const api = {
     Uid = 1,
     MenuId,
     Qty = 1,
+    Mobileno,
   }) =>
     get("/AddOrder", {
       transid,
@@ -44,6 +47,7 @@ export const api = {
       Uid,
       MenuId,
       Qty,
+      Mobileno,
     }),
 
   getOrderDetail: ({ transid, Comid = comid }) =>
@@ -51,4 +55,6 @@ export const api = {
 
   deleteOrderEntry: ({ trans3id, Uid = 1 }) =>
     get("/DeleteOrderEntry", { trans3id, Uid }),
+
+  getRestroName: ({ Comid = comid }) => get("/TestAPI", { Comid }),
 };

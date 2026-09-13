@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchTableData } from '../../store/slices/tableSlice';
 import { fetchRunningOrders } from '../../store/slices/orderSlice';
-import { logoutUser } from '../../store/slices/authSlice';
+import { logoutUser, restroName } from '../../store/slices/authSlice';
 import { isOccupied } from '../../utils/normalize';
 
 export default function TablesPage() {
@@ -23,6 +23,7 @@ export default function TablesPage() {
   const load = () => {
     dispatch(fetchTableData({ Comid, SectionId: section, FloorId: floor }));
     dispatch(fetchRunningOrders({ Comid }));
+    dispatch(restroName(Comid))
   };
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function TablesPage() {
             <Utensils size={17} />
           </div>
           <div>
-            <strong>Restaurant POS</strong>
+            <strong>{auth.restroName}</strong>
             <span>Waiter workspace</span>
           </div>
         </div>

@@ -8,6 +8,7 @@ const initialState = {
   status: saved ? "authenticated" : "unauthenticated",
   userData: saved,
   error: null,
+  restroName: "",
 };
 
 export const userLogin = createAsyncThunk(
@@ -36,6 +37,19 @@ export const userLogin = createAsyncThunk(
       return rejectWithValue(
         error.response?.data?.message || error.message || "Login failed",
       );
+    }
+  },
+);
+
+export const restroName = createAsyncThunk(
+  "auth/restroName",
+  async ({ Comid = "1" }, { rejectWithValue }) => {
+    try {
+      const name = await api.getRestroName({ Comid });
+      
+      return name.data[0].CompanyName;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
   },
 );
@@ -71,6 +85,16 @@ const slice = createSlice({
         state.status = "unauthenticated";
         state.userData = null;
         state.error = action.payload || "Login failed";
+      })
+      .addCase(restroName.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(restroName.fulfilled, (state, action) => {
+        state.loading = false;
+        state.restroName = action.payload;
+      })
+      .addCase(restroName.rejected, (state, action) => {
+        state.loading = false;
       });
   },
 });

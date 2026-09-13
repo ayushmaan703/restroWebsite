@@ -77,6 +77,7 @@ export default function CustomerCheckout() {
             Uid,
             transid,
             OrderNo: orderNo,
+            Mobileno: Number(mobileNo)
           }),
         );
 

@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react';
 
 export default function CategoryTabs({ categories, active, onChange }) {
-  const visibleCategories = categories.slice(0, 3);
-  const moreCategories = categories.slice(1);
+  const visibleCategories = categories.slice(0, 5);
+  const moreCategories = categories.slice(5);
   const moreActive = moreCategories.some(
     category => String(category.id) === String(active),
   );
