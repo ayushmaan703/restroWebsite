@@ -3,6 +3,22 @@ import { Minus, Plus } from 'lucide-react';
 export default function FoodCard({ item, qty = 0, onAdd, onChange }) {
   const hasImage = Boolean(item.image);
 
+  const getImageUrl = (url) => {
+    if (!url) return '';
+
+    // If website is HTTPS, use the same-origin proxy
+    // to avoid mixed-content blocking.
+    if (
+      window.location.protocol === 'https:' &&
+      url.startsWith('http://103.175.22.11:8911/')
+    ) {
+      return url.replace('http://103.175.22.11:8911', '');
+    }
+
+    // If website is HTTP, use the backend URL directly.
+    return url;
+  };
+
   return (
     <article
       className={`customer-food-card ${hasImage ? '' : 'customer-no-image'}`}
@@ -10,7 +26,7 @@ export default function FoodCard({ item, qty = 0, onAdd, onChange }) {
       {hasImage ? (
         <img
           className="food-image"
-          src={item.image}
+          src={getImageUrl(item.image)}
           alt={item.name}
           onError={event => {
             event.currentTarget.style.display = 'none';
