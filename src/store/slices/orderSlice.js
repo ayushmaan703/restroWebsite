@@ -132,8 +132,6 @@ export const addOrderItem = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log(Mobileno);
-
       const response = await api.addOrder({
         tableId,
         MenuId: Number(menuId),

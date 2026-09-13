@@ -17,10 +17,8 @@ export default function CustomerCheckout() {
     sessionStorage.getItem('customerMobile') || '',
   );
 
-  const tableId =
-    params.get('table') || sessionStorage.getItem('customerTable') || '';
-  const Comid =
-    params.get('Comid') || sessionStorage.getItem('customerComid') || '1';
+  const tableId = params.get('table') || sessionStorage.getItem('customerTable') || '';
+  const Comid = params.get('Comid') || sessionStorage.getItem('customerComid') || '1';
   const Uid = params.get('Uid') || '1';
   const total = items.reduce((sum, item) => sum + item.qty * item.price, 0);
 
@@ -77,7 +75,7 @@ export default function CustomerCheckout() {
             Uid,
             transid,
             OrderNo: orderNo,
-            Mobileno: Number(mobileNo)
+            Mobileno: (mobileNo)
           }),
         );
 
