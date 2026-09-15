@@ -106,6 +106,7 @@ export const normalizeMenuItem = (row, index) => ({
     ],
     "",
   ),
+  image64: value(row, ["Img64"], ""),
   raw: row,
 });
 

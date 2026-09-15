@@ -1,7 +1,8 @@
 import { Minus, Plus } from 'lucide-react';
 
 export default function FoodCard({ item, qty = 0, onAdd, onChange }) {
-  const hasImage = Boolean(item.image);
+  // const hasImage = Boolean(item.image);
+  const hasImage = Boolean(item.image64);
 
   const getImageUrl = (url) => {
     if (!url) return '';
@@ -19,6 +20,18 @@ export default function FoodCard({ item, qty = 0, onAdd, onChange }) {
     return url;
   };
 
+  const normalizeBase64Image = rawImage => {
+    const image = String(rawImage || '').trim();
+
+    if (!image) return '';
+
+    if (image.startsWith('data:image/')) {
+      return image;
+    }
+
+    return `data:image/jpeg;base64,${image}`;
+  };
+
   return (
     <article
       className={`customer-food-card ${hasImage ? '' : 'customer-no-image'}`}
@@ -26,7 +39,8 @@ export default function FoodCard({ item, qty = 0, onAdd, onChange }) {
       {hasImage ? (
         <img
           className="food-image"
-          src={getImageUrl(item.image)}
+          // src={getImageUrl(item.image)}
+          src={normalizeBase64Image(item.image64)}
           alt={item.name}
           onError={event => {
             event.currentTarget.style.display = 'none';
